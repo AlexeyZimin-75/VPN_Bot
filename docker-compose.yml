@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:15
+    container_name: vpn_bot_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_strong_password
+      POSTGRES_DB: vpn_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  bot:
+    build: .
+    container_name: vpn_bot_app
+    network_mode: host
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    extra_hosts:
+      - "greenvpnrus.duckdns.org:host-gateway"
+
+volumes:
+  postgres_data:
